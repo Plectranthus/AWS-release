@@ -12,6 +12,7 @@ on:
       - "Dockerfile"
     branches:
       - main
+
 jobs:
   makeTagAndRelease:
     runs-on: ubuntu-latest
@@ -35,12 +36,16 @@ jobs:
           body: ${{ steps.create_tag.outputs.changelog }}
           draft: false
           prerelease: false
+
   buildImageAndPush:
     name: 도커 이미지 빌드와 푸시
     needs: makeTagAndRelease
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+
+      - name: Grant execute permission for gradlew
+        run: chmod +x gradlew
 
       - name: application-secret 추가
         env:
