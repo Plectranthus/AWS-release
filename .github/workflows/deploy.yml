@@ -12,7 +12,7 @@ on:
       - main
 
 env:
-  DOCKER_IMAGE_NAME: app250416 # 공통으로 설정해도 됨 (하지만 output도 병행)
+  DOCKER_IMAGE_NAME: app250416
 
 jobs:
   makeTagAndRelease:
@@ -52,6 +52,18 @@ jobs:
         env:
           APPLICATION_SECRET: ${{ secrets.APPLICATION_SECRET }}
         run: echo "$APPLICATION_SECRET" > src/main/resources/application-secret.yml
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '21'
+
+      - name: Grant execute permission for gradlew
+        run: chmod +x ./gradlew
+
+      - name: Build with Gradle
+        run: ./gradlew clean build -x test
 
       - name: Docker Buildx 설치
         uses: docker/setup-buildx-action@v2
